@@ -9,7 +9,7 @@ MyString::MyString(std::string str): str{str}, _is_basic(str.size() == 1) {
     }
 }
 
-auto MyString::operator<(MyString const& other) const noexcept -> bool {
+auto MyString::operator<=(MyString const& other) const noexcept -> bool {
     return other.str.find(this->str) != std::string::npos;
 }
 
@@ -23,7 +23,7 @@ auto MyString::size() const noexcept -> std::size_t {
 
 auto MyString::disassembly() const noexcept -> std::vector<std::pair<MyString,MyString>> {
     auto parts = std::vector<std::pair<MyString, MyString>>{};
-    for (size_t i = 1, len = this->size(); i < len; ++i) {
+    for (size_t i = 1, len = std::size(*this); i < len; ++i) {
         parts.emplace_back(this->str.substr(0, i), this->str.substr(i));
     }
     return parts;
