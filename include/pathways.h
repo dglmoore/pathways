@@ -7,6 +7,8 @@
 #include <numeric>
 #include <optional>
 
+namespace pathways {
+
 // We need a type to represent a `Cache` which maps pairs of (hashed) objects
 // to stored value (e.g. the coassembly index between the objects.
 template <typename Store>
@@ -145,7 +147,7 @@ class Context {
         // Compute the assembly index of an object. Optionally, you can turn on or off
         // caching with the `cache` argument.
         auto assembly_index(T const& x, bool cache = true) noexcept -> int32_t {
-            if (is_basic(x)) {
+            if (pathways::is_basic(x)) {
                 // If `x` is a basic object, it's assembly index is 0 by definition.
                 return 0;
             } else if (cache) {
@@ -166,7 +168,7 @@ class Context {
             // together to produce the original. We then compute the smallest coassembly
             // index of each pair — plus 1 to account for the final joinging operation
             // which yields the original object.
-            for (Components<T> const& parts: disassemble(x)) {
+            for (pathways::Components<T> const& parts: pathways::disassemble(x)) {
                 auto const cc = this->coassembly_index(parts, cache);
                 c = std::min(c, cc + 1);
             }
@@ -183,10 +185,10 @@ class Context {
         // `assembly_index`, you can optionally turn on or off caching with the `cache`
         // argument.
         auto coassembly_index(T const& x, T const& y, bool cache = true) noexcept -> int32_t {
-            if (is_basic(x)) {
+            if (pathways::is_basic(x)) {
                 // If the *first* object is basic, return the *second* object's assembly index.
                 return this->assembly_index(y, cache);
-            } else if (is_basic(y)) {
+            } else if (pathways::is_basic(y)) {
                 // If the *second* object is basic, return the *first* object's assembly index.
                 return this->assembly_index(x, cache);
             } else if (cache) {
@@ -206,12 +208,12 @@ class Context {
             // The following are simple approximations which *should* be replaced with
             // a more robust algorithm. However, it seems the approximation is pretty
             // reasonable give a toy system (binary string).
-            if (is_below(x, y)) {
+            if (pathways::is_below(x, y)) {
                 // If the *first* object is less than or equal to the *second* object,
                 // approximate the coassembly index as the assembly index of the *second*
                 // object.
                 cc = this->assembly_index(y, cache);
-            } else if (is_below(y, x)) {
+            } else if (pathways::is_below(y, x)) {
                 // If the *second* object is less than or equal to the *first* object,
                 // approximate the coassembly index as the assembly index of the *first*
                 // object.
@@ -231,3 +233,5 @@ class Context {
             }
         }
 };
+
+}

@@ -17,7 +17,7 @@ class MyString {
         friend struct std::hash<MyString>;
 
     public:
-        using disassembly_type = std::vector<Components<MyString>>;
+        using disassembly_type = std::vector<pathways::Components<MyString>>;
 
         MyString() = delete;
 
@@ -58,5 +58,7 @@ namespace std {
     };
 }
 
-// This just ensures that the template class is instantiated earlier.
-template class Context<MyString>;
+namespace pathways {
+    // This just ensures that the template class is instantiated earlier.
+    template class Context<MyString>;
+}

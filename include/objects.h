@@ -1,5 +1,7 @@
 #pragma once
 
+namespace pathways {
+
 // This file defines the basic interface required of any given *object* in
 // order for the pathway assembly algorithms to do their thing. This interface
 // is designed to allow you to implement it for any type, regardless of whether
@@ -88,3 +90,5 @@ using Components = std::pair<T, T>;
 //     };
 // }
 
+
+}
