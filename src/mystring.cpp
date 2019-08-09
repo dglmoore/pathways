@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <stdexcept>
-#include "string.h"
+#include "mystring.h"
 
 MyString::MyString(std::string str): str{str}, _is_basic(str.size() == 1) {
     if (str.empty()) {

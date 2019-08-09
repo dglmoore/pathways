@@ -1,6 +1,6 @@
 #include <random>
 #include "pathways.h"
-#include "string.h"
+#include "mystring.h"
 
 template <typename Generator>
 auto random_string(std::size_t n, Generator &gen, double p = 0.5) -> MyString {
