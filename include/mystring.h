@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "pathways.h"
 
 class MyString {
     private:
@@ -16,6 +17,8 @@ class MyString {
         friend struct std::hash<MyString>;
 
     public:
+        using disassembly_type = std::vector<Components<MyString>>;
+
         MyString() = delete;
 
         // Construct a `MyString` instance from an *non-empty* `std::string`.
@@ -28,7 +31,7 @@ class MyString {
 
         // REQUIRED: You have to be able to compare objects — less than or equal
         // (hard problem!)
-        auto operator<=(MyString const&) const noexcept -> bool;
+        auto is_below(MyString const&) const noexcept -> bool;
 
         // REQUIRED: You have to be able to decide if an object is "basic" (easy
         // problem)
@@ -39,22 +42,21 @@ class MyString {
 
         // REQUIRED: You have to be able to break your object up into an iterable
         // "container" of pairs (simple problem)
-        auto disassembly() const noexcept -> std::vector<std::pair<MyString,MyString>>;
+        auto disassemble() const noexcept -> disassembly_type;
 
         // This is just to make the strings printable to the screen.
         friend auto operator<<(std::ostream& out, MyString const& s) noexcept -> std::ostream&;
 };
 
 namespace std {
-    // REQUIRED: You need to be able to generate a hash (of type `std::size`) for
+    // REQUIRED: You need to be able to generate a hash (of type `std::size_t`) for
     // your objects.
     template <> struct hash<MyString> {
-        typedef MyString argument_type;
-        typedef std::size_t result_type;
-
-        auto operator()(argument_type const& arg) const noexcept {
+        auto operator()(MyString const& arg) const noexcept -> std::size_t {
             return std::hash<std::string>{}(arg.str);
         }
     };
 }
 
+// This just ensures that the template class is instantiated earlier.
+template class Context<MyString>;

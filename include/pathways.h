@@ -1,5 +1,6 @@
 #pragma once
 
+#include "objects.h"
 #include <algorithm>
 #include <cstdint>
 #include <map>
@@ -53,7 +54,7 @@ using Cache = std::map<std::pair<std::size_t, std::size_t>, Store>;
 // [1] There is a protected and overloaded `coassembly_index` method which
 // accepts a pair of objects rather than the objects as separate objects. That
 // function then calls the public `coassembly_index` accordingly.
-template <typename T>
+template <typename T, typename Disassembly = typename disassembly_type<T>::value>
 class Context {
     protected:
         // The `_cache` maps pairs of hashes (of type `std::size`) to `int32_t` values
@@ -63,11 +64,12 @@ class Context {
         // Get the cached value for a given pair of object hashes. The `std::nullopt_t`
         // value is returned if the key is not found.
         auto cached(std::pair<std::size_t, std::size_t> const& key) const noexcept -> std::optional<int32_t> {
+            std::optional<int32_t> cached_value = {};
             auto const iter = this->_cache.find(key);
             if (iter != std::end(this->_cache)) {
-                return iter->second;
+                cached_value = iter->second;
             }
-            return {};
+            return cached_value;
         }
 
         // Get the cached value of two given object hashes. The `std::nullopt_t` value
@@ -129,11 +131,11 @@ class Context {
 
     public:
         Context() = default;
-        Context(Context<T> const&) = delete;
-        Context(Context<T>&&) = default;
+        Context(Context<T, Disassembly> const&) = delete;
+        Context(Context<T, Disassembly>&&) = default;
 
-        auto operator=(Context<T> const&) -> Context<T>& = delete;
-        auto operator=(Context<T>&&) -> Context<T>& = default;
+        auto operator=(Context<T, Disassembly> const&) -> Context<T, Disassembly>& = delete;
+        auto operator=(Context<T, Disassembly>&&) -> Context<T, Disassembly>& = default;
 
         // Get the number of pairs stored in the cache.
         auto cache_size() const noexcept -> std::size_t {
@@ -143,7 +145,7 @@ class Context {
         // Compute the assembly index of an object. Optionally, you can turn on or off
         // caching with the `cache` argument.
         auto assembly_index(T const& x, bool cache = true) noexcept -> int32_t {
-            if (x.is_basic()) {
+            if (is_basic(x)) {
                 // If `x` is a basic object, it's assembly index is 0 by definition.
                 return 0;
             } else if (cache) {
@@ -164,7 +166,7 @@ class Context {
             // together to produce the original. We then compute the smallest coassembly
             // index of each pair — plus 1 to account for the final joinging operation
             // which yields the original object.
-            for (auto const& parts: x.disassembly()) {
+            for (Components<T> const& parts: disassemble(x)) {
                 auto const cc = this->coassembly_index(parts, cache);
                 c = std::min(c, cc + 1);
             }
@@ -181,10 +183,10 @@ class Context {
         // `assembly_index`, you can optionally turn on or off caching with the `cache`
         // argument.
         auto coassembly_index(T const& x, T const& y, bool cache = true) noexcept -> int32_t {
-            if (x.is_basic()) {
+            if (is_basic(x)) {
                 // If the *first* object is basic, return the *second* object's assembly index.
                 return this->assembly_index(y, cache);
-            } else if (y.is_basic()) {
+            } else if (is_basic(y)) {
                 // If the *second* object is basic, return the *first* object's assembly index.
                 return this->assembly_index(x, cache);
             } else if (cache) {
@@ -204,12 +206,12 @@ class Context {
             // The following are simple approximations which *should* be replaced with
             // a more robust algorithm. However, it seems the approximation is pretty
             // reasonable give a toy system (binary string).
-            if (x <= y) {
+            if (is_below(x, y)) {
                 // If the *first* object is less than or equal to the *second* object,
                 // approximate the coassembly index as the assembly index of the *second*
                 // object.
                 cc = this->assembly_index(y, cache);
-            } else if (y <= x) {
+            } else if (is_below(y, x)) {
                 // If the *second* object is less than or equal to the *first* object,
                 // approximate the coassembly index as the assembly index of the *first*
                 // object.
