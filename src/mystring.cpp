@@ -13,17 +13,17 @@ class MyString {
         MyString() = delete;
 
         MyString(std::string str): str{std::move(str)} {
-        	if (this->str.empty()) {
-        		throw std::invalid_argument("string is empty");
-        	}
+            if (this->str.empty()) {
+                throw std::invalid_argument("string is empty");
+            }
         }
 
         auto is_basic() const -> bool {
-        	return std::size(this->str) == 1;
+            return std::size(this->str) == 1;
         }
-        
+
         auto is_below(MyString const& other) const -> bool {
-        	return other.str.find(this->str) != std::string::npos;
+            return other.str.find(this->str) != std::string::npos;
         }
 
         auto disassemble() const -> disassembly_type {
@@ -46,7 +46,7 @@ namespace std {
 auto main() -> int {
     std::random_device rd;
     std::mt19937 gen(rd());
-    
+
     auto const str = random_string(200, gen);
     pathways::Context<MyString> ctx;
     std::cout << "c ~ " << ctx.assembly_index(str) << std::endl;

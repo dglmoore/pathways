@@ -23,7 +23,7 @@ namespace pathways {
 // method and you are covered.
 template <typename T>
 auto is_basic(T const& x) -> bool {
-	return x.is_basic();
+    return x.is_basic();
 }
 
 // Second, you need to be able to tell if one object is "below" another. That
@@ -38,7 +38,7 @@ auto is_basic(T const& x) -> bool {
 // method and you are covered.
 template <typename T>
 auto is_below(T const& x, T const& y) -> bool {
-	return x.is_below(y);
+    return x.is_below(y);
 }
 
 // Third, objects are disassembled into pairs of components. The result of this
@@ -63,7 +63,7 @@ auto is_below(T const& x, T const& y) -> bool {
 // within our class/struct.
 template <typename T>
 struct disassembly_type {
-	using value = typename T::disassembly_type;
+    using value = typename T::disassembly_type;
 };
 
 // Fourth, you need to actually specify how your object can be disassembled.
@@ -75,7 +75,7 @@ struct disassembly_type {
 // method and you are covered.
 template <typename T, typename Disassembly = typename disassembly_type<T>::value>
 auto disassemble(T const& x) -> Disassembly {
-	return x.disassemble();
+    return x.disassemble();
 }
 
 // For convience in writing some of the algorithms, we've provided the
