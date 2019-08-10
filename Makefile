@@ -1,13 +1,12 @@
-TARGET=bin/pathways
-SOURCES=$(wildcard src/*.cpp)
+TARGETS=bin/string bin/mystring
 
-all: $(TARGET)
+all: bin/string bin/mystring
 
-$(TARGET): $(SOURCES)
+bin/%: src/%.cpp
 	@mkdir -p $(shell dirname $@)
-	$(CXX) -std=c++17 -Wall -Wextra -pedantic -Iinclude -O3 -o $@ $^
+	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^
 
 clean:
-	rm $(TARGET)
+	rm $(TARGETS)
 
 .PHONY: clean

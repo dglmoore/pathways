@@ -1,7 +1,7 @@
-#pragma once
-
 #include <string>
-#include "objects.h"
+#include <iostream>
+#include "../include/pathways.h"
+#include "random.h"
 
 namespace pathways {
 	template <>
@@ -20,14 +20,24 @@ namespace pathways {
     }
     
     template <>
-    auto disassemble<std::string>(std::string const& str) -> typename disassembly_type<std::string>::value {
-    	using disassembly_type = typename disassembly_type<std::string>::value;
-        auto parts = disassembly_type{};
+    auto disassemble<std::string>(std::string const& str) -> std::vector<Components<std::string>> {
+    	if (str.empty()) {
+    		throw std::invalid_argument("string is empty");
+    	}
+        auto parts = std::vector<Components<std::string>>{};
         for (size_t i = 1, len = std::size(str); i < len; ++i) {
             parts.emplace_back(str.substr(0, i), str.substr(i));
         }
         return parts;
     }
+}
+
+auto main() -> int {
+    std::random_device rd;
+    std::mt19937 gen(rd());
     
-    template class Context<std::string>;
+    auto const str = random_string(200, gen);
+    pathways::Context<std::string> ctx;
+    std::cout << "c ~ " << ctx.assembly_index(str) << std::endl;
+    std::cout << "Cache size: " << ctx.cache_size() << std::endl;
 }
