@@ -59,14 +59,14 @@ using Cache = std::map<std::pair<std::size_t, std::size_t>, Store>;
 template <typename T, typename Disassembly = typename disassembly_type<T>::value>
 class Context {
     protected:
-        // The `_cache` maps pairs of hashes (of type `std::size`) to `int32_t` values
+        // The `_cache` maps pairs of hashes (of type `std::size`) to `uint32_t` values
         // representing (co)assembly indicies.
-        Cache<int32_t> _cache;
+        Cache<uint32_t> _cache;
 
         // Get the cached value for a given pair of object hashes. The `std::nullopt_t`
         // value is returned if the key is not found.
-        auto cached(std::pair<std::size_t, std::size_t> const& key) const noexcept -> std::optional<int32_t> {
-            std::optional<int32_t> cached_value = {};
+        auto cached(std::pair<std::size_t, std::size_t> const& key) const noexcept -> std::optional<uint32_t> {
+            std::optional<uint32_t> cached_value = {};
             auto const iter = this->_cache.find(key);
             if (iter != std::end(this->_cache)) {
                 cached_value = iter->second;
@@ -76,13 +76,13 @@ class Context {
 
         // Get the cached value of two given object hashes. The `std::nullopt_t` value
         // is returned if the key is not found.
-        auto cached(std::size_t const& x_hash, std::size_t const& y_hash) const noexcept -> std::optional<int32_t> {
+        auto cached(std::size_t const& x_hash, std::size_t const& y_hash) const noexcept -> std::optional<uint32_t> {
             return this->cached(std::make_pair(x_hash, y_hash));
         }
 
         // Get the cached value of two given object. The `std::nullopt_t` value is
         // returned if the key is not found.
-        auto cached(T const& x, T const& y) const noexcept -> std::optional<int32_t> {
+        auto cached(T const& x, T const& y) const noexcept -> std::optional<uint32_t> {
             auto const x_hash = std::hash<T>{}(x);
             auto const y_hash = std::hash<T>{}(y);
 
@@ -91,7 +91,7 @@ class Context {
 
         // Get the cached value of single given object, stored in the cache as a pair
         // `(x,x)`. The `std::nullopt_t` value is returned if the key is not found.
-        auto cached(T const& x) const noexcept -> std::optional<int32_t> {
+        auto cached(T const& x) const noexcept -> std::optional<uint32_t> {
             auto const x_hash = std::hash<T>{}(x);
 
             return this->cached(x_hash, x_hash);
@@ -99,18 +99,18 @@ class Context {
 
         // Set the cached value for a pair of object hashes, returning the stored
         // value.
-        auto cache(std::pair<std::size_t, std::size_t> const& key, int32_t store) noexcept -> int32_t {
+        auto cache(std::pair<std::size_t, std::size_t> const& key, uint32_t store) noexcept -> uint32_t {
             return this->_cache[key] = store;
         }
 
         // Set the cached value for two given object haches, returning the stored
         // value.
-        auto cache(std::size_t x_hash, std::size_t y_hash, int32_t store) noexcept -> int32_t {
+        auto cache(std::size_t x_hash, std::size_t y_hash, uint32_t store) noexcept -> uint32_t {
             return this->cache(std::make_pair(x_hash, y_hash), store);
         }
 
         // Set the cached value for two given objects, returning the stored value.
-        auto cache(T const& x, T const& y, int32_t store) noexcept-> int32_t {
+        auto cache(T const& x, T const& y, uint32_t store) noexcept-> uint32_t {
             auto const x_hash = std::hash<T>{}(x);
             auto const y_hash = std::hash<T>{}(y);
 
@@ -119,7 +119,7 @@ class Context {
 
         // Set the cached value for a single object — treated as a pair `(x,x)` —
         // returning the stored value.
-        auto cache(T const& x, int32_t store) noexcept -> int32_t {
+        auto cache(T const& x, uint32_t store) noexcept -> uint32_t {
             auto const x_hash = std::hash<T>{}(x);
 
             return this->cache(x_hash, x_hash, store);
@@ -127,7 +127,7 @@ class Context {
 
         // Compute the coassembly index for a pair of objects, optionally caching
         // intermediate results.
-        auto coassembly_index(std::pair<T const&, T const&> const& objs, bool cache = true) noexcept -> int32_t {
+        auto coassembly_index(std::pair<T const&, T const&> const& objs, bool cache = true) noexcept -> uint32_t {
             return this->coassembly_index(std::get<0>(objs), std::get<1>(objs), cache);
         }
 
@@ -146,7 +146,7 @@ class Context {
 
         // Compute the assembly index of an object. Optionally, you can turn on or off
         // caching with the `cache` argument.
-        auto assembly_index(T const& x, bool cache = true) noexcept -> int32_t {
+        auto assembly_index(T const& x, bool cache = true) noexcept -> uint32_t {
             if (pathways::is_basic(x)) {
                 // If `x` is a basic object, it's assembly index is 0 by definition.
                 return 0;
@@ -162,7 +162,7 @@ class Context {
             // In the case we have not yet computed the assembly index for the object, or
             // we've decided to ignore the cached value, we start with the largest possible
             // assembly index that we can store ($2^31-1$).
-            auto c = std::numeric_limits<int32_t>::max();
+            auto c = std::numeric_limits<uint32_t>::max();
 
             // We then disassembly the object into pairs of objects which can be joined
             // together to produce the original. We then compute the smallest coassembly
@@ -184,7 +184,7 @@ class Context {
         // *Estimate* the coassembly index of two objects. As with the
         // `assembly_index`, you can optionally turn on or off caching with the `cache`
         // argument.
-        auto coassembly_index(T const& x, T const& y, bool cache = true) noexcept -> int32_t {
+        auto coassembly_index(T const& x, T const& y, bool cache = true) noexcept -> uint32_t {
             if (pathways::is_basic(x)) {
                 // If the *first* object is basic, return the *second* object's assembly index.
                 return this->assembly_index(y, cache);
@@ -203,7 +203,7 @@ class Context {
             // In the case we have not yet computed the coassembly index for the object, or
             // we've decided to ignore the cached value, we start with the largest possible
             // assembly index that we can store ($2^31-1$).
-            auto cc = std::numeric_limits<int32_t>::max();
+            auto cc = std::numeric_limits<uint32_t>::max();
 
             // The following are simple approximations which *should* be replaced with
             // a more robust algorithm. However, it seems the approximation is pretty
