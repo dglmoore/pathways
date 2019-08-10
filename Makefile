@@ -1,6 +1,6 @@
-TARGETS=bin/string bin/mystring
+TARGETS=bin/string bin/mystring bin/iterable
 
-all: bin/string bin/mystring
+all: $(TARGETS)
 
 bin/%: src/%.cpp
 	@mkdir -p $(shell dirname $@)
