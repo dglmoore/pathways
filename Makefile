@@ -2,15 +2,15 @@ TARGETS=bin/string bin/mystring bin/iterable
 
 all: $(TARGETS)
 
-bin/scaling: src/scaling.cpp src/args.cpp
+bin/scaling: cmd/scaling.cpp cmd/args.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
 
-bin/entropy: src/entropy.cpp src/args.cpp
+bin/entropy: cmd/entropy.cpp cmd/args.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
 
-bin/%: src/%.cpp
+bin/%: cmd/%.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^
 
