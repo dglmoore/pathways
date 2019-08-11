@@ -1,6 +1,6 @@
-#include <iostream>
-#include "../include/pathways.h"
 #include "random.h"
+#include <iostream>
+#include <pathways/pathways.h>
 
 class MyString {
     private:

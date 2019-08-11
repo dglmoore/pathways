@@ -1,7 +1,7 @@
-#include "../include/string.h"
 #include "args.h"
 #include "random.h"
 #include <mgl2/mgl.h>
+#include <pathways/string.h>
 
 auto statistics(std::vector<double> data) {
     double const N = std::size(data);

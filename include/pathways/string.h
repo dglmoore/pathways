@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../include/pathways.h"
+#include "pathways.h"
 
 namespace pathways {
     template <>

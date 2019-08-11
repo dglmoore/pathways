@@ -1,7 +1,7 @@
-#include <string>
-#include <iostream>
-#include "../include/pathways.h"
 #include "random.h"
+#include <iostream>
+#include <pathways/pathways.h>
+#include <string>
 
 namespace pathways {
     class StringDisassembly {
