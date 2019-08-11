@@ -6,6 +6,10 @@ bin/scaling: src/scaling.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
 
+bin/entropy: src/entropy.cpp
+	@mkdir -p $(shell dirname $@)
+	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
+
 bin/%: src/%.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^
