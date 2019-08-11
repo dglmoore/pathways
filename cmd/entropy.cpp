@@ -1,7 +1,7 @@
-#include <mgl2/mgl.h>
+#include "../include/string.h"
 #include "args.h"
 #include "random.h"
-#include "string.h"
+#include <mgl2/mgl.h>
 
 struct Range {
     double min;

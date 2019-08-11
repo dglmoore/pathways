@@ -1,7 +1,6 @@
-#include <iostream>
-#include "../include/pathways.h"
+#include "../include/string.h"
 #include "random.h"
-#include "string.h"
+#include <iostream>
 
 auto main() -> int {
     std::random_device rd;
