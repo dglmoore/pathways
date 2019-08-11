@@ -72,38 +72,6 @@ auto plot(mglGraph &gr, PlotData const& data) -> mglGraph& {
     return gr;
 }
 
-struct Fit {
-    std::string formula;
-    std::string vars;
-    std::vector<double> init;
-};
-
-auto plot(mglGraph &gr, PlotData const& data, Fit fit) -> mglGraph& {
-    auto const max_err = data.err.Maximal();
-
-    auto const x_min = data.x.Minimal() - data.margins.l;
-    auto const x_max = data.x.Maximal() + data.margins.r;
-    auto const y_min = data.y.Minimal() - data.margins.b - max_err;
-    auto const y_max = data.y.Maximal() + data.margins.t + max_err;
-
-    mglData init(std::size(fit.init));
-    init.Set(fit.init.data(), std::size(fit.init));
-    auto res = gr.Fit(data.y, fit.formula.c_str(), fit.vars.c_str(), init);
-
-    gr.Title(data.title.c_str());
-    gr.SetRange('x', x_min, x_max);
-    gr.SetRange('y', y_min, y_max);
-    gr.Axis();
-    gr.Label('x', data.xlabel.c_str());
-    gr.Label('y', data.ylabel.c_str());
-    gr.Error(data.x, data.y, data.err);
-    gr.Plot(data.x, data.y, " #o");
-    gr.Plot(res);
-    gr.PutsFit(mglPoint((x_max - x_min) / 2 + 1, y_max - 1), "c = ");
-
-    return gr;
-}
-
 template <typename Generator>
 auto length_scaling(mglGraph &gr, Generator &gen, size_t min_len, size_t max_len, size_t num_str, double p) -> mglGraph& {
     auto data = PlotData{
@@ -119,7 +87,7 @@ auto length_scaling(mglGraph &gr, Generator &gen, size_t min_len, size_t max_len
         std::tie(data.y.a[i], data.err.a[i]) = assembly_index(gen, len, num_str, p);
     }
 
-    return plot(gr, data, { "m*x + b", "mb", {0, 0} });
+    return plot(gr, data);
 }
 
 template <typename Generator>
@@ -148,8 +116,6 @@ auto main(int argc, char **argv) -> int {
     std::mt19937 gen(args.seed);
 
     mglGraph gr;
-    gr.SuppressWarn(true);
-
     gr.SetSize(800, 1200);
 
     gr.SubPlot(1, 2, 0);
