@@ -33,6 +33,7 @@
 
 # Binary Directories
 bin/
+test/build/
 
 # Image Files
 *.png

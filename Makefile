@@ -14,7 +14,11 @@ bin/%: cmd/%.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -Iinclude -o $@ $^
 
-clean:
-	rm $(TARGETS)
+test:
+	@+make -B -C test all run
 
-.PHONY: clean
+clean:
+	@make -C test clean
+	@rm -rf bin
+
+.PHONY: clean test
