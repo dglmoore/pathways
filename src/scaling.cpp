@@ -3,6 +3,7 @@
 #include <iostream>
 #include <mgl2/mgl.h>
 #include "../include/pathways.h"
+#include "args.h"
 #include "random.h"
 
 namespace pathways {
@@ -172,90 +173,6 @@ auto prob_scaling(mglGraph &gr, Generator &gen, size_t len, size_t num_str, doub
 
     return plot(gr, data);
 }
-
-class Args {
-    private:
-        int argc;
-        char **argv;
-        bool parsed = false;
-
-        auto help() {
-            std::cerr << "usage: " << argv[0] << " [OPTIONS] <NUM SAMPLES> <FILENAME>\n"
-                      << "\n"
-                      << "Args:\n"
-                      << "\t<NUM SAMPLES>    number of samples for each datapoint\n"
-                      << "\t<FILENAME>       output filename\n"
-                      << "\n"
-                      << "OPTIONS:\n"
-                      << "\t-s <seed>        the random seed\n"
-                      << std::endl;
-            std::exit(1);
-        }
-
-        auto parse_seed(std::string seed_str) {
-            auto s = std::stof(seed_str);
-            if (std::floor(s) != s) {
-                std::cerr << "error: seed must be an integer\n" << std::endl;
-                help();
-            } else if (s < 0) {
-                std::cerr << "error: seed must be at least 0\n" << std::endl;
-                help();
-            }
-            this->seed = s;
-        }
-
-        auto parse_num_sample(std::string n_str) {
-            auto n = std::stof(n_str);
-            if (std::floor(n) != n) {
-                std::cerr << "error: number of samples must be an integer\n" << std::endl;
-                help();
-            } else if (n < 1) {
-                std::cerr << "error: number of samples must be at least 1\n" << std::endl;
-                help();
-            }
-            this->n = n;
-        }
-
-        auto parse_filename(std::string filename) {
-            this->filename = filename;
-        }
-
-        auto parse() {
-            std::size_t p = 0;
-
-            for (int i = 1; i < argc; ++i) {
-                std::string arg = argv[i];
-                if (arg == "-s") {
-                    parse_seed(argv[++i]);
-                } else if (p == 0) {
-                    parse_num_sample(arg);
-                    ++p;
-                } else if (p == 1) {
-                    parse_filename(arg);
-                    ++p;
-                } else if (arg[0] == '-') {
-                    std::cerr << "error: unrecognized flag\n" << std::endl;
-                    help();
-                } else {
-                    std::cerr << "error: unrecognized argument\n" << std::endl;
-                    help();
-                }
-            }
-            if (p != 2) {
-                help();
-            }
-            parsed = true;
-        }
-
-    public:
-        std::size_t n;
-        std::string filename;
-        std::random_device::result_type seed;
-
-        Args(int argc, char **argv): argc{argc}, argv{argv} {
-            this->parse();
-        }
-};
 
 auto main(int argc, char **argv) -> int {
     auto args = Args{argc, argv};

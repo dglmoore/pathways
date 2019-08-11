@@ -2,11 +2,11 @@ TARGETS=bin/string bin/mystring bin/iterable
 
 all: $(TARGETS)
 
-bin/scaling: src/scaling.cpp
+bin/scaling: src/scaling.cpp src/args.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
 
-bin/entropy: src/entropy.cpp
+bin/entropy: src/entropy.cpp src/args.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic -O3 -o $@ $^ -lmgl
 
